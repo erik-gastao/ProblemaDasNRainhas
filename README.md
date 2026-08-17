@@ -2,6 +2,13 @@
 
 Tabuleiro interativo para explorar o problema das N rainhas **manualmente**. O usuário escolhe N, coloca as rainhas e as arrasta livremente pelo tabuleiro. O app detecta e mostra os conflitos, mas **não resolve nada**: não há backtracking, heurística, dica ou contagem de soluções.
 
+## Documentação
+
+| Arquivo | Conteúdo |
+| --- | --- |
+| [`ARQUITETURA.md`](ARQUITETURA.md) | Organização do projeto, componentes, representação do tabuleiro e das rainhas, verificação de conflitos e diagrama da arquitetura |
+| [`PROMPTS.md`](PROMPTS.md) | Registro dos principais prompts usados com a IA e as decisões que cada um produziu |
+
 ## Como rodar
 
 Único pré-requisito: [Node.js](https://nodejs.org) `^20.19.0` ou `>=22.12.0` — exigência do Vite 8. O projeto foi desenvolvido no Node 24. Confira com `node --version`.
