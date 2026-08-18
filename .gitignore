@@ -12,6 +12,10 @@ dist
 dist-ssr
 *.local
 
+# Empacotamento desktop (scripts/package-desktop.mjs) — gerado, não versionado
+.cache
+ClickAndGo
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

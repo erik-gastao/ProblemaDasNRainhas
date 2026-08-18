@@ -30,6 +30,7 @@ Abra <http://localhost:5173>. O servidor tem hot reload — salvar um arquivo at
 | `npm run build` | Gera a versão de produção em `dist/` |
 | `npm run preview` | Serve o conteúdo de `dist/` para conferir o build |
 | `npm run lint` | Lint com oxlint |
+| `npm run package:win` | Gera o pacote desktop "clique e jogue" em `ClickAndGo/` (ver seção abaixo) |
 
 Tudo é local: as dependências ficam em `node_modules/` dentro da pasta do projeto e nada é instalado globalmente. Para remover o projeto por completo, basta apagar a pasta.
 
@@ -86,6 +87,41 @@ Posições inválidas são permitidas de propósito. Ao criar um conflito, as ra
 
 As casas são nomeadas como no xadrez: colunas `a` a `p` da esquerda para a direita, linhas numeradas de baixo para cima, de `1` até `N`.
 
+## Versão desktop (clique e jogue)
+
+Pra distribuir o app pra alguém sem Node instalado, sem terminal e sem
+instalar nada:
+
+```bash
+npm run package:win
+```
+
+Gera `ClickAndGo/`, uma pasta autocontida com o build de produção, um
+runtime Node portátil (baixado de nodejs.org na primeira vez e cacheado em
+`.cache/`), o servidor estático `serve-static.cjs` e um atalho `Jogar.bat`.
+Compacte essa pasta e distribua — quem receber só extrai e clica em
+`Jogar.bat`: sobe um servidor local e abre o navegador padrão sozinho.
+Fechar a janela do terminal encerra o jogo.
+
+**Por que precisa de servidor, e não abrir `dist/index.html` direto no
+navegador?** O build do Vite usa `<script type="module">`, e Chrome/Edge
+bloqueiam módulos ES carregados via `file://` por política de CORS —
+funcionaria só no Firefox. Servir por `http://localhost` resolve os dois
+problemas de uma vez (caminhos absolutos do build e o bloqueio de módulos).
+
+**Por que não Tauri ou Electron?** Foi a primeira tentativa (registrada em
+`PROMPTS.md`, seção 9) — um app nativo de verdade, com instalador `.exe` e
+acesso a APIs do sistema. Abandonada porque exige toolchain Rust + MSVC Build
+Tools + Windows SDK instalados na máquina de quem builda; nesta máquina o SDK
+estava incompleto, e completá-lo pediu elevação (UAC) e download de ~1–2 GB
+só para compilar. O empacotador com Node portátil não compila nada: baixa um
+`.zip` oficial e copia arquivos, então funciona em qualquer Windows sem
+pré-requisito. A troca vale a pena porque o app hoje não usa nenhum recurso
+nativo (filesystem, notificações etc.) — é HTML/JS servido localmente. Se
+isso mudar quando entrarem os algoritmos de otimização (ver seção "Ponto de
+extensão" em `ARQUITETURA.md`), Tauri continua sendo o caminho natural pra
+evoluir, e nada na estrutura atual do app impede migrar pra lá depois.
+
 ## Estrutura
 
 ```
@@ -108,6 +144,9 @@ src/
     ConflictLines.tsx       linhas ligando rainhas em conflito
     StatusPanel.tsx         contadores, lista de conflitos, instruções
   App.tsx                   alterna entre a tela inicial e o tabuleiro
+scripts/
+  serve-static.cjs          servidor estático sem dependências, usado no pacote desktop
+  package-desktop.mjs       builda, baixa o Node portátil e monta release/
 ```
 
 A detecção de conflito vive em `src/logic/`, separada da interface e sem nenhuma dependência de React. É código puro e testado, o que deixa o caminho aberto para um solver reaproveitá-la depois.

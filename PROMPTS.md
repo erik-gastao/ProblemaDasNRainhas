@@ -135,6 +135,69 @@ de prompts e a explicação da arquitetura com diagrama.
 logs de sessão do Claude Code (`~/.claude/projects/`) em vez de reescritos de
 memória, para que o registro seja verificável.
 
+## 9. Empacotamento desktop — Tauri, reversão e Node portátil
+
+> fale sobre a viabilidade de criar um .bat ou .exe, algum arquivo clicavel
+> para instalar o necessario, via prompts automaticos etc, para o user
+> somente clicar e "jogar"
+
+**Intenção:** distribuir o app pra alguém sem Node instalado, sem exigir
+terminal.
+
+**Resultado:** levantamento de opções (bat + `npx serve`, `dist/index.html`
+aberto direto, bat com Node portátil embutido, empacotamento nativo com
+Tauri, auto-installer). O prompt seguinte —
+*"tenha em mente que esse projeto será expandido no futuro com algoritmos
+para resolução dos problemas"* — mudou o critério de escolha: com Web
+Workers/WASM prováveis mais adiante, Tauri passou a ser recomendado por dar
+acesso a filesystem real e auto-update, apesar do custo de setup maior.
+
+> vamos usar tauri, lembrese de colocar tudo que acha necessario no readme
+
+**Intenção:** seguir com Tauri e documentar o porquê.
+
+**Resultado:** scaffold criado (`src-tauri/`, deps `@tauri-apps/*`). Rust
+instalado via winget. Build falhou por linker: a máquina tinha uma instalação
+incompleta do Visual Studio Build Tools (sem Windows SDK — a instalação
+anterior tinha ficado cancelada, `isComplete: false` no `vswhere`). Completar
+o SDK exigiu elevação (UAC) e um download de ~1–2 GB.
+
+> cancele tudo
+
+**Intenção:** interromper o instalador do Windows SDK em andamento.
+
+**Resultado:** processos do instalador mortos (via `taskkill` elevado —
+matar processo elevado exige elevação também). Nenhum componente novo do SDK
+chegou a ser instalado.
+
+> reverter e remover tudo que fizemos e mudar a abordagem
+
+**Intenção:** desfazer a tentativa Tauri por completo antes de trocar de
+estratégia.
+
+**Resultado:** `git checkout` nos arquivos modificados, `src-tauri/`
+removido, `npm install` pra ressincronizar `node_modules`, Rust desinstalado
+via winget (`winget uninstall Rustlang.Rustup`). Repositório voltou ao estado
+anterior à tentativa — nada disso tinha sido commitado.
+
+> volta pra opção 3 (bat + node portátil), ela é a que nao requer grandes
+> passos certo?
+
+**Intenção:** confirmar e seguir com a opção sem toolchain de compilação.
+
+**Resultado:** `scripts/serve-static.cjs` (servidor estático sem
+dependências) e `scripts/package-desktop.mjs` (builda, baixa o Node
+portátil oficial de nodejs.org, monta `release/ProblemaDasNRainhas/` com
+`node.exe` + `dist/` + `Jogar.bat`). Testado de ponta a ponta: `npm run
+package:win` gera a pasta, `Jogar.bat` sobe o servidor e abre o navegador,
+`curl` confirmou HTML e JS servidos corretamente.
+
+**Observação:** o custo real de cada abordagem só apareceu na prática, não na
+análise — a viabilidade de Tauri dependia do estado de uma instalação do
+Visual Studio Build Tools que não era visível de antemão. A opção descartada
+por complexidade (`.bat` + runtime portátil) acabou sendo a que funcionou de
+primeira, sem depender de nada pré-instalado na máquina do usuário.
+
 ---
 
 ## Prompts de configuração de ambiente
