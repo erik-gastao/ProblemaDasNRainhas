@@ -473,3 +473,258 @@ kbd {
     width: 100%;
   }
 }
+
+/* ---------- Modo genetico ---------- */
+
+.mode-switch {
+  display: flex;
+  gap: 6px;
+}
+
+.ga {
+  flex: 1 1 320px;
+  min-width: 300px;
+}
+
+.ga-params {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.ga-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ga-field__label {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 0.72rem;
+  color: var(--text-dim);
+}
+
+.ga-field__hint {
+  font-style: normal;
+  font-size: 0.64rem;
+  opacity: 0.7;
+}
+
+.ga-field__input {
+  width: 100%;
+  padding: 6px 8px;
+  font: inherit;
+  font-size: 0.85rem;
+  color: var(--text);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+.ga-field__input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.ga-field__input:disabled {
+  opacity: 0.45;
+}
+
+.ga-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ga-status {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+}
+
+.ga-batch {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.ga-batch__stats {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.82rem;
+}
+
+.ga-batch__stats strong {
+  color: var(--accent);
+}
+
+/* ---------- Grafico ---------- */
+
+.chart {
+  margin: 0;
+  padding: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.chart--empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 90px;
+  font-size: 0.78rem;
+  color: var(--text-dim);
+}
+
+.chart svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.chart__axis {
+  stroke: var(--border);
+  stroke-width: 1;
+}
+
+.chart__optimum {
+  stroke: var(--ok);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+  opacity: 0.55;
+}
+
+.chart__line {
+  fill: none;
+  stroke-width: 1.2;
+  vector-effect: non-scaling-stroke;
+}
+
+.chart__line--best {
+  stroke: var(--accent);
+}
+
+.chart__line--average {
+  stroke: var(--text-dim);
+  stroke-width: 1;
+}
+
+.chart__line--worst {
+  stroke: var(--bad);
+  stroke-width: 0.9;
+  opacity: 0.6;
+}
+
+.chart__line--diversity {
+  stroke: var(--warn);
+  stroke-width: 1;
+  stroke-dasharray: 2 2;
+  opacity: 0.8;
+}
+
+.chart__tick {
+  fill: var(--text-dim);
+  font-size: 7px;
+}
+
+.chart__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 6px;
+  font-size: 0.68rem;
+  color: var(--text-dim);
+}
+
+.chart__key::before {
+  content: '';
+  display: inline-block;
+  width: 10px;
+  height: 2px;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+
+.chart__key--best::before {
+  background: var(--accent);
+}
+
+.chart__key--average::before {
+  background: var(--text-dim);
+}
+
+.chart__key--worst::before {
+  background: var(--bad);
+}
+
+.chart__key--diversity::before {
+  background: var(--warn);
+}
+
+/* ---------- Historico ---------- */
+
+.run-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.run-list__item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 10px;
+  font-size: 0.74rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--bad);
+  border-radius: 6px;
+}
+
+.run-list__item--ok {
+  border-left-color: var(--ok);
+}
+
+.run-list__head {
+  color: var(--text);
+}
+
+.run-list__body {
+  color: var(--text-dim);
+}
+
+.run-list__foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.68rem;
+  color: var(--text-dim);
+  opacity: 0.75;
+}
+
+.run-list__del {
+  padding: 0 4px;
+  color: var(--text-dim);
+  background: none;
+  border: none;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.run-list__del:hover {
+  color: var(--bad);
+}

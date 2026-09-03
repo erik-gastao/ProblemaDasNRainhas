@@ -108,6 +108,17 @@ export function useBoard(initialN: number = DEFAULT_N) {
     setState(EMPTY);
   }, []);
 
+  /**
+   * Substitui as rainhas de uma vez, sem passar pelo historico.
+   *
+   * E a porta por onde um solver escreve no tabuleiro. Nao empilha snapshot
+   * de proposito: o AG produz uma configuracao nova a cada geracao, e
+   * desfazer geracao a geracao estouraria o limite de 50 em dois segundos.
+   */
+  const setQueens = useCallback((next: Queen[]) => {
+    setState((s) => ({ queens: next, history: s.history }));
+  }, []);
+
   const conflicts = useMemo(() => detectConflicts(state.queens), [state.queens]);
   const conflicted = useMemo(() => conflictingIds(conflicts), [conflicts]);
 
@@ -127,6 +138,7 @@ export function useBoard(initialN: number = DEFAULT_N) {
     clear,
     resize,
     reset,
+    setQueens,
   };
 }
 
