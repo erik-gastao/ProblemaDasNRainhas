@@ -1,12 +1,22 @@
 # Problema das N Rainhas
 
-Tabuleiro interativo para explorar o problema das N rainhas **manualmente**. O usuário escolhe N, coloca as rainhas e as arrasta livremente pelo tabuleiro. O app detecta e mostra os conflitos, mas **não resolve nada**: não há backtracking, heurística, dica ou contagem de soluções.
+Tabuleiro interativo para explorar o problema das N rainhas de dois jeitos.
+No **modo manual**, o usuário escolhe N, coloca e arrasta rainhas livremente
+pelo tabuleiro; o app detecta e mostra os conflitos, mas não impede posições
+inválidas — só um botão de colocação assistida ajuda a evitar conflito (ver
+seção "Botões"). No **modo genético**, um algoritmo genético canônico
+(seleção por roleta, crossover de 1 ponto, mutação por gene, sem elitismo)
+evolui uma população de tabuleiros até encontrar uma configuração sem
+conflitos, com todos os parâmetros editáveis e cada execução persistida no
+navegador pra comparar experimentos.
 
 ## Documentação
 
 | Arquivo | Conteúdo |
 | --- | --- |
 | [`ARQUITETURA.md`](ARQUITETURA.md) | Organização do projeto, componentes, representação do tabuleiro e das rainhas, verificação de conflitos e diagrama da arquitetura |
+| [`SolutionPurpose.md`](SolutionPurpose.md) | Justificativa de cada escolha do algoritmo genético: representação, aptidão, operadores, parâmetros, bancada de experimentos |
+| [`FUNCIONALIDADES.md`](FUNCIONALIDADES.md) | Como a colocação assistida de rainha evita conflito (backtracking), e o que cada campo do painel do AG faz — com referência de linha no código |
 | [`PROMPTS.md`](PROMPTS.md) | Registro dos principais prompts usados com a IA e as decisões que cada um produziu |
 
 ## Como rodar
@@ -25,7 +35,7 @@ Abra <http://localhost:5173>. O servidor tem hot reload — salvar um arquivo at
 | Comando | O que faz |
 | --- | --- |
 | `npm run dev` | Servidor de desenvolvimento em `localhost:5173` |
-| `npm test` | Roda os testes da lógica de conflito |
+| `npm test` | Roda os testes (conflitos, colocação assistida, backtracking, algoritmo genético) |
 | `npm run test:watch` | Testes em modo watch, reexecutando a cada alteração |
 | `npm run build` | Gera a versão de produção em `dist/` |
 | `npm run preview` | Serve o conteúdo de `dist/` para conferir o build |
@@ -74,7 +84,29 @@ O arrasto começa depois de 5 px de movimento. Abaixo disso o gesto conta como c
 
 ### Botões
 
-**Desfazer** volta um passo (histórico de até 50 jogadas). **Limpar** esvazia o tabuleiro.
+**Adicionar rainha** coloca uma rainha nova sozinha, a partir de qualquer
+configuração já presente no tabuleiro. Tenta, em ordem: uma casa que mantém
+o tabuleiro completável até uma solução válida (verificado por
+backtracking); se não houver, uma casa sem conflito imediato mas que pode
+levar a beco sem saída; se nem essa houver (tabuleiro já em conflito), uma
+casa livre qualquer. Detalhe do algoritmo em
+[`FUNCIONALIDADES.md`](FUNCIONALIDADES.md#1-como-o-botão-adicionar-rainha-evita-conflito).
+**Desfazer** volta um passo (histórico de até 50 jogadas). **Limpar** esvazia
+o tabuleiro mantendo o histórico. **Resetar** zera o tabuleiro (e a execução
+do AG, se houver) sem entrar no histórico de desfazer.
+
+## Modo genético
+
+Ao trocar para "Genético" no topo, o tabuleiro para de responder a cliques e
+passa a mostrar o melhor indivíduo da geração corrente — as rainhas deslizam
+casa a casa conforme a população evolui. O painel ao lado expõe todos os
+parâmetros do algoritmo (população, taxas de crossover e mutação, limite de
+gerações, semente do PRNG) e as métricas de cada geração (aptidão, média,
+pior, diversidade), além de rodar em lote (várias sementes de uma vez) e
+guardar cada execução no IndexedDB para comparação. Explicação campo a campo
+em [`FUNCIONALIDADES.md`](FUNCIONALIDADES.md#2-campos-do-painel-algoritmo-genético)
+e a justificativa de cada decisão de design em
+[`SolutionPurpose.md`](SolutionPurpose.md).
 
 ## Regras de movimento e de conflito
 
