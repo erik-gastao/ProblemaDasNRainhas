@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
-import { emptySquares, fitQueens, safeSquares } from '../logic/board';
+import { correctSquares, emptySquares, fitQueens, safeSquares } from '../logic/board';
 import { conflictingIds, detectConflicts } from '../logic/conflicts';
 import type { Queen, Square } from '../types';
 import { DEFAULT_N } from '../types';
@@ -52,14 +52,18 @@ export function useBoard(initialN: number = DEFAULT_N) {
   );
 
   /**
-   * Poe uma rainha nova numa casa livre. Prioriza casas que nenhuma rainha
-   * atual ataca; se nenhuma sobrar, cai numa casa livre qualquer.
+   * Poe uma rainha nova a partir da configuracao atual, qualquer que ela
+   * seja. Tenta, em ordem: uma casa correta (mantem o tabuleiro completavel
+   * ate uma solucao valida), depois uma casa so' segura (sem conflito
+   * imediato, mas pode levar a beco sem saida), depois qualquer casa livre
+   * (usado quando o tabuleiro atual ja tem conflito e nada mais se aplica).
    */
   const addQueen = useCallback(() => {
     apply((queens) => {
       if (queens.length >= n) return null;
-      const candidates = safeSquares(queens, n);
-      const pool = candidates.length > 0 ? candidates : emptySquares(queens, n);
+      let pool = correctSquares(queens, n);
+      if (pool.length === 0) pool = safeSquares(queens, n);
+      if (pool.length === 0) pool = emptySquares(queens, n);
       if (pool.length === 0) return null;
       const square = pool[Math.floor(Math.random() * pool.length)];
       nextId.current += 1;

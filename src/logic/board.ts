@@ -1,4 +1,5 @@
 import { conflictBetween } from './conflicts';
+import { canComplete } from './solver';
 import type { Queen, Square } from '../types';
 
 /**
@@ -26,5 +27,17 @@ export function emptySquares(queens: Queen[], n: number): Square[] {
 export function safeSquares(queens: Queen[], n: number): Square[] {
   return emptySquares(queens, n).filter((square) =>
     queens.every((q) => conflictBetween(q, { id: '', ...square }) === null),
+  );
+}
+
+/**
+ * Casas seguras que, alem de nao gerar conflito imediato, ainda deixam o
+ * tabuleiro completavel: existe uma forma de colocar as rainhas restantes
+ * sem que nenhuma ataque outra. Uma casa so' segura pode levar a um beco
+ * sem saida; uma casa correta nunca leva.
+ */
+export function correctSquares(queens: Queen[], n: number): Square[] {
+  return safeSquares(queens, n).filter((square) =>
+    canComplete([...queens, { id: '', ...square }], n),
   );
 }

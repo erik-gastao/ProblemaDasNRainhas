@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { Queen } from '../types';
-import { fitQueens } from './board';
+import { correctSquares, fitQueens, safeSquares } from './board';
 
 const q = (id: string, row: number, col: number): Queen => ({ id, row, col });
 
@@ -31,5 +31,25 @@ describe('fitQueens', () => {
 
   it('n = 1 aceita no maximo a rainha em a1', () => {
     expect(fitQueens([q('a', 0, 0), q('b', 0, 1)], 1)).toEqual([q('a', 0, 0)]);
+  });
+});
+
+// n=4 so' tem duas solucoes: [1,3,0,2] e [2,0,3,1] (linha -> coluna).
+describe('correctSquares', () => {
+  it("do vazio, so' aceita as 8 casas que aparecem em alguma solucao de 4", () => {
+    const squares = correctSquares([], 4);
+    expect(squares).toHaveLength(8);
+    expect(squares).toContainEqual({ row: 0, col: 1 });
+    expect(squares).toContainEqual({ row: 0, col: 2 });
+    expect(squares).not.toContainEqual({ row: 0, col: 0 });
+  });
+
+  it('descarta casa segura que leva a beco sem saida', () => {
+    const queens = [q('a', 0, 1)];
+    // (2,2) nao ataca (0,1), mas nenhuma solucao de 4 rainhas tem essa dupla.
+    expect(safeSquares(queens, 4)).toContainEqual({ row: 2, col: 2 });
+    expect(correctSquares(queens, 4)).not.toContainEqual({ row: 2, col: 2 });
+    // (2,0) fecha a solucao [1,3,0,2] junto com a linha 1 = col 3.
+    expect(correctSquares(queens, 4)).toContainEqual({ row: 2, col: 0 });
   });
 });

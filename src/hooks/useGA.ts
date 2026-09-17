@@ -35,7 +35,7 @@ export function useGA(n: number) {
     crossoverRate: DEFAULT_CROSSOVER_RATE,
     mutationRate: DEFAULT_MUTATION_RATE,
     maxGenerations: DEFAULT_MAX_GENERATIONS,
-    seed: 1,
+    seed: 5,
   });
   const [status, setStatus] = useState<GAStatus>('idle');
   const [history, setHistory] = useState<GenerationStats[]>([]);

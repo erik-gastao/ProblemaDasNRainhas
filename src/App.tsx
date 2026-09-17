@@ -104,6 +104,17 @@ export default function App() {
               </button>
             </>
           ) : null}
+          <button
+            type="button"
+            className="btn"
+            onClick={() => {
+              ga.reset();
+              board.reset(board.n);
+            }}
+            disabled={board.queens.length === 0 && ga.status === 'idle'}
+          >
+            Resetar
+          </button>
         </div>
       </header>
 
