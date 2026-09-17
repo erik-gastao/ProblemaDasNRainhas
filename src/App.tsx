@@ -81,6 +81,14 @@ export default function App() {
               <button
                 type="button"
                 className="btn"
+                onClick={board.addQueen}
+                disabled={board.remaining === 0}
+              >
+                Adicionar rainha
+              </button>
+              <button
+                type="button"
+                className="btn"
                 onClick={board.undo}
                 disabled={!board.canUndo}
               >

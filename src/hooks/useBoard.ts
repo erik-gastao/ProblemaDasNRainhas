@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
-import { fitQueens } from '../logic/board';
+import { emptySquares, fitQueens, safeSquares } from '../logic/board';
 import { conflictingIds, detectConflicts } from '../logic/conflicts';
 import type { Queen, Square } from '../types';
 import { DEFAULT_N } from '../types';
@@ -50,6 +50,22 @@ export function useBoard(initialN: number = DEFAULT_N) {
     },
     [apply, n],
   );
+
+  /**
+   * Poe uma rainha nova numa casa livre. Prioriza casas que nenhuma rainha
+   * atual ataca; se nenhuma sobrar, cai numa casa livre qualquer.
+   */
+  const addQueen = useCallback(() => {
+    apply((queens) => {
+      if (queens.length >= n) return null;
+      const candidates = safeSquares(queens, n);
+      const pool = candidates.length > 0 ? candidates : emptySquares(queens, n);
+      if (pool.length === 0) return null;
+      const square = pool[Math.floor(Math.random() * pool.length)];
+      nextId.current += 1;
+      return [...queens, { id: `q${nextId.current}`, ...square }];
+    });
+  }, [apply, n]);
 
   const remove = useCallback(
     (id: string) => {
@@ -132,6 +148,7 @@ export function useBoard(initialN: number = DEFAULT_N) {
     canUndo: state.history.length > 0,
     queenAt,
     place,
+    addQueen,
     remove,
     move,
     undo,
