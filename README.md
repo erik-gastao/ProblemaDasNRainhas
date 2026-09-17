@@ -161,12 +161,25 @@ src/
   types.ts                  Queen, Square, ConflictPair, limites de N
   logic/
     conflicts.ts            detecção de conflito — funções puras, sem React
-    board.ts                adapta as rainhas quando o tabuleiro muda de tamanho
+    board.ts                redimensiona; casas livres/seguras/corretas p/ adicionar rainha
+    solver.ts               backtracking N-rainhas — verifica se dá pra completar solução
     coords.ts               nomes de casas no estilo xadrez
-    conflicts.test.ts       testes da detecção de conflito
-    board.test.ts           testes do redimensionamento
+    *.test.ts               testes de cada arquivo acima
+    ga/
+      types.ts              GAParams, GenerationStats, RunRecord, BatchSummary, defaults
+      genome.ts             genoma aleatório e conversão genoma <-> Queen[]
+      fitness.ts            aptidão = C(n,2) − colisões, em O(n)
+      diversity.ts          entropia média por gene, mede convergência prematura
+      operators.ts          seleção por roleta, crossover de 1 ponto, mutação
+      random.ts             PRNG mulberry32 (semente reproduz a execução)
+      evolve.ts             gerador puro do ciclo do AG — núcleo dos dois modos de execução
+      run.ts                modo lote: roda várias sementes sem quadro de animação
+      *.test.ts             testes de cada arquivo acima
   hooks/
-    useBoard.ts             estado do tabuleiro, histórico de desfazer
+    useBoard.ts             estado do tabuleiro: colocar, remover, mover, desfazer, adicionar, resetar
+    useGA.ts                orquestra o gerador evolve p/ modo visual (por quadro) e modo lote
+  storage/
+    runsDb.ts               persiste cada execução do AG no IndexedDB
   components/
     BoardSetup.tsx          tela de escolha de N
     SizeSlider.tsx          barra que redimensiona o tabuleiro
@@ -174,14 +187,17 @@ src/
     BoardSquare.tsx         uma casa
     QueenPiece.tsx          peça em SVG
     ConflictLines.tsx       linhas ligando rainhas em conflito
-    StatusPanel.tsx         contadores, lista de conflitos, instruções
-  App.tsx                   alterna entre a tela inicial e o tabuleiro
+    StatusPanel.tsx         contadores, lista de conflitos, instruções (modo manual)
+    GAPanel.tsx             controles e métricas do algoritmo genético
+    FitnessChart.tsx        gráfico de aptidão por geração
+    RunHistory.tsx          execuções salvas, lidas do IndexedDB
+  App.tsx                   alterna tela inicial ↔ tabuleiro, e modo manual ↔ genético
 scripts/
   serve-static.cjs          servidor estático sem dependências, usado no pacote desktop
   package-desktop.mjs       builda, baixa o Node portátil e monta release/
 ```
 
-A detecção de conflito vive em `src/logic/`, separada da interface e sem nenhuma dependência de React. É código puro e testado, o que deixa o caminho aberto para um solver reaproveitá-la depois.
+Toda a lógica de domínio — conflito, backtracking e algoritmo genético — vive em `src/logic/`, separada da interface e sem nenhuma dependência de React. É código puro e testado, o que permite ao AG e ao solver rodarem fora da árvore de renderização, ou até num Web Worker.
 
 ## Stack
 
