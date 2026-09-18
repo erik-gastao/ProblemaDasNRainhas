@@ -17,6 +17,7 @@ navegador pra comparar experimentos.
 | [`ARQUITETURA.md`](ARQUITETURA.md) | Organização do projeto, componentes, representação do tabuleiro e das rainhas, verificação de conflitos e diagrama da arquitetura |
 | [`SolutionPurpose.md`](SolutionPurpose.md) | Justificativa de cada escolha do algoritmo genético: representação, aptidão, operadores, parâmetros, bancada de experimentos |
 | [`FUNCIONALIDADES.md`](FUNCIONALIDADES.md) | Como a colocação assistida de rainha evita conflito (backtracking), e o que cada campo do painel do AG faz — com referência de linha no código |
+| [`RELATORIO_ALGORITMO_GENETICO.md`](RELATORIO_ALGORITMO_GENETICO.md) | Relatório de uso da técnica: fundamentação teórica, modelagem, implementação e resultados experimentais medidos |
 | [`PROMPTS.md`](PROMPTS.md) | Registro dos principais prompts usados com a IA e as decisões que cada um produziu |
 
 ## Como rodar
